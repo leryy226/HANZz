@@ -15,12 +15,30 @@
             position: relative;
         }
 
-        /* ANIMASI BACKGROUND PARTIKEL (Canvas) */
-        #bg-canvas {
+        /* BACKGROUND ANIME FULL SCREEN */
+        #anime-bg {
             position: fixed;
             top: 0; left: 0; width: 100%; height: 100%;
+            /* GANTI URL DI BAWAH INI PAKE LINK GAMBAR ANIME LO */
+            background-image: url('https://wallpapers.com/images/hd/naruto-4k-ultra-instinct-9t8j2e9b8z4m6a2s.jpg');
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            z-index: -2;
+            animation: slowPan 20s ease-in-out infinite alternate;
+        }
+
+        /* OVERLAY GELAP (Biar teks kebaca) */
+        #anime-overlay {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: linear-gradient(180deg, rgba(5,5,16,0.85) 0%, rgba(5,5,16,0.95) 100%);
             z-index: -1;
-            opacity: 0.6;
+        }
+
+        @keyframes slowPan {
+            0% { transform: scale(1) translate(0, 0); }
+            100% { transform: scale(1.1) translate(-2%, -2%); }
         }
 
         /* INSTANT WELCOME (Splash Screen) */
@@ -50,14 +68,14 @@
         @keyframes fadeIn { to { opacity: 1 } }
 
         /* MAIN CONTENT */
-        #main-content { display: none; min-height: 100vh; position: relative; z-index: 1; }
+        #main-content { display: none; min-height: 100vh; position: relative; z-index: 1; padding-bottom: 40px;}
         #main-content.show { display: block; animation: fadeIn 1s ease; }
 
         /* Header */
         header { 
-            padding: 20px; border-bottom: 1px solid #1f2937; 
+            padding: 20px; border-bottom: 1px solid rgba(31, 41, 55, 0.5); 
             display: flex; justify-content: space-between; align-items: center;
-            background: rgba(5, 5, 16, 0.8); backdrop-filter: blur(10px);
+            background: rgba(5, 5, 16, 0.7); backdrop-filter: blur(10px);
             position: sticky; top: 0; z-index: 100;
         }
         .brand { font-size: 1.5rem; font-weight: bold; color: #fff; text-shadow: 0 0 10px #fff; }
@@ -74,27 +92,26 @@
         /* Hero Banner */
         .hero { 
             padding: 60px 20px; text-align: center; 
-            background: radial-gradient(circle at center, #111827 0%, #050510 100%);
-            border-bottom: 1px solid #1f2937;
+            border-bottom: 1px solid rgba(31, 41, 55, 0.5);
         }
         .hero h1 { font-size: 2.2rem; margin-bottom: 10px; }
         .hero h1 span { color: #00ffcc; text-shadow: 0 0 15px #00ffcc; }
-        .hero p { color: #94a3b8; font-size: 0.95rem; max-width: 400px; margin: 0 auto; line-height: 1.8; }
+        .hero p { color: #e2e8f0; font-size: 0.95rem; max-width: 400px; margin: 0 auto; line-height: 1.8; text-shadow: 1px 1px 2px #000;}
 
         /* File List Section */
         .section-title { 
             padding: 15px 20px; font-size: 1.1rem; margin: 30px 20px 10px 20px; 
-            border-left: 4px solid #a855f7; background: rgba(26, 26, 46, 0.5);
+            border-left: 4px solid #a855f7; background: rgba(26, 26, 46, 0.7);
             box-shadow: -5px 0 15px -5px #a855f7; color: #fff; text-shadow: 0 0 5px #a855f7;
-            border-radius: 0 8px 8px 0;
+            border-radius: 0 8px 8px 0; backdrop-filter: blur(5px);
         }
         
         .file-grid { padding: 0 20px 40px 20px; display: grid; grid-template-columns: 1fr; gap: 15px; }
 
         /* Card File */
         .file-card {
-            background: rgba(17, 24, 39, 0.7); backdrop-filter: blur(5px);
-            border: 1px solid #1f2937; border-radius: 12px;
+            background: rgba(17, 24, 39, 0.8); backdrop-filter: blur(10px);
+            border: 1px solid rgba(31, 41, 55, 0.8); border-radius: 12px;
             padding: 20px; display: flex; flex-direction: column; gap: 12px;
             transition: all 0.3s ease;
         }
@@ -104,9 +121,9 @@
         }
         .file-header { display: flex; justify-content: space-between; align-items: center; }
         .file-name { font-size: 1.1rem; font-weight: bold; color: #fff; text-shadow: 0 0 5px #fff; }
-        .file-tag { font-size: 0.7rem; background: rgba(168, 85, 247, 0.2); color: #a855f7; padding: 4px 8px; border-radius: 4px; border: 1px solid #a855f7; text-shadow: 0 0 5px #a855f7; }
-        .file-desc { font-size: 0.85rem; color: #94a3b8; }
-        .file-meta { display: flex; gap: 15px; font-size: 0.75rem; color: #64748b; margin-top: 5px; }
+        .file-tag { font-size: 0.7rem; background: rgba(168, 85, 247, 0.3); color: #e9d5ff; padding: 4px 8px; border-radius: 4px; border: 1px solid #a855f7; }
+        .file-desc { font-size: 0.85rem; color: #cbd5e1; }
+        .file-meta { display: flex; gap: 15px; font-size: 0.75rem; color: #94a3b8; margin-top: 5px; }
         
         /* Tombol Download */
         .btn-dl {
@@ -123,22 +140,23 @@
 
         /* Empty State */
         .empty-state {
-            text-align: center; padding: 50px 20px; color: #64748b;
-            border: 1px dashed #1f2937; border-radius: 12px; margin: 0 20px 40px 20px;
-            background: rgba(17, 24, 39, 0.3);
+            text-align: center; padding: 50px 20px; color: #cbd5e1;
+            border: 1px dashed rgba(100, 116, 139, 0.5); border-radius: 12px; margin: 0 20px 40px 20px;
+            background: rgba(17, 24, 39, 0.6); backdrop-filter: blur(5px);
         }
-        .empty-state h2 { color: #94a3b8; margin-bottom: 10px; text-shadow: 0 0 10px #64748b; }
+        .empty-state h2 { color: #fff; margin-bottom: 10px; text-shadow: 0 0 10px #64748b; }
     </style>
 </head>
 <body>
 
-    <!-- Canvas buat Animasi Background -->
-    <canvas id="bg-canvas"></canvas>
+    <!-- Anime Background & Overlay -->
+    <div id="anime-bg"></div>
+    <div id="anime-overlay"></div>
 
     <!-- 1. INSTANT WELCOME SCREEN -->
     <div id="welcome-screen">
         <div class="welcome-text">WELCOME TO HANZz STORE</div>
-        <div class="welcome-sub">Connecting to secure server...</div>
+        <div class="welcome-sub">Loading Anime Assets...</div>
     </div>
 
     <!-- 2. MAIN CONTENT -->
@@ -159,7 +177,6 @@
         <!-- AREA FILE (NANTI ISI DI SINI) -->
         <!-- ======================================================== -->
 
-        <!-- Kalau belum ada file, biarin kode "empty-state" ini -->
         <div class="empty-state">
             <h2>[ BELUM ADA FILE ]</h2>
             <p>Database sedang diupdate. Cek lagi nanti ya!</p>
@@ -190,68 +207,14 @@
         
     </div>
 
-    <!-- 3. JAVASCRIPT (Animasi Welcome & Background) -->
+    <!-- 3. JAVASCRIPT -->
     <script>
-        // --- SCRIPT WELCOME SCREEN ---
         window.addEventListener('load', () => {
             setTimeout(() => {
                 document.getElementById('welcome-screen').classList.add('hidden');
                 document.getElementById('main-content').classList.add('show');
             }, 3500); 
         });
-
-        // --- SCRIPT ANIMASI BACKGROUND (PARTIKEL) ---
-        const canvas = document.getElementById('bg-canvas');
-        const ctx = canvas.getContext('2d');
-        let width, height;
-        let particles = [];
-
-        function resize() {
-            width = canvas.width = window.innerWidth;
-            height = canvas.height = window.innerHeight;
-        }
-        window.addEventListener('resize', resize);
-        resize();
-
-        class Particle {
-            constructor() {
-                this.x = Math.random() * width;
-                this.y = Math.random() * height;
-                this.vx = (Math.random() - 0.5) * 1.5;
-                this.vy = (Math.random() - 0.5) * 1.5;
-                this.size = Math.random() * 2 + 1;
-                this.color = Math.random() > 0.5 ? '#00ffcc' : '#a855f7'; // Cyan atau Purple
-            }
-            update() {
-                this.x += this.vx;
-                this.y += this.vy;
-                if (this.x < 0 || this.x > width) this.vx *= -1;
-                if (this.y < 0 || this.y > height) this.vy *= -1;
-            }
-            draw() {
-                ctx.beginPath();
-                ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
-                ctx.fillStyle = this.color;
-                ctx.shadowBlur = 10;
-                ctx.shadowColor = this.color;
-                ctx.fill();
-            }
-        }
-
-        // Bikin 50 partikel
-        for (let i = 0; i < 50; i++) {
-            particles.push(new Particle());
-        }
-
-        function animate() {
-            ctx.clearRect(0, 0, width, height);
-            particles.forEach(p => {
-                p.update();
-                p.draw();
-            });
-            requestAnimationFrame(animate);
-        }
-        animate();
     </script>
 </body>
 </html>
