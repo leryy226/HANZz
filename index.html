@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HANZz STORE</title>
+    <style>
+        /* Base & Fonts */
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Courier New', Courier, monospace; }
+        body { 
+            background-color: #050510; 
+            color: #fff; 
+            overflow-x: hidden; 
+            min-height: 100vh;
+            position: relative;
+        }
+
+        /* ANIMASI BACKGROUND PARTIKEL (Canvas) */
+        #bg-canvas {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            z-index: -1;
+            opacity: 0.6;
+        }
+
+        /* INSTANT WELCOME (Splash Screen) */
+        #welcome-screen {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100vh;
+            background: #050510; display: flex; flex-direction: column;
+            justify-content: center; align-items: center; z-index: 9999;
+            transition: opacity 0.8s ease, visibility 0.8s;
+        }
+        #welcome-screen.hidden { opacity: 0; visibility: hidden; }
+        
+        .welcome-text {
+            font-size: 2rem; color: #00ffcc; text-transform: uppercase;
+            letter-spacing: 5px; text-shadow: 0 0 10px #00ffcc, 0 0 20px #00ffcc;
+            white-space: nowrap; overflow: hidden;
+            border-right: 3px solid #00ffcc;
+            animation: typing 2s steps(20, end), blink 0.75s step-end infinite;
+        }
+        .welcome-sub { 
+            margin-top: 15px; font-size: 0.9rem; color: #a855f7; 
+            letter-spacing: 2px; opacity: 0; animation: fadeIn 2s 2s forwards; 
+            text-shadow: 0 0 10px #a855f7;
+        }
+        
+        @keyframes typing { from { width: 0 } to { width: 100% } }
+        @keyframes blink { from, to { border-color: transparent } 50% { border-color: #00ffcc } }
+        @keyframes fadeIn { to { opacity: 1 } }
+
+        /* MAIN CONTENT */
+        #main-content { display: none; min-height: 100vh; position: relative; z-index: 1; }
+        #main-content.show { display: block; animation: fadeIn 1s ease; }
+
+        /* Header */
+        header { 
+            padding: 20px; border-bottom: 1px solid #1f2937; 
+            display: flex; justify-content: space-between; align-items: center;
+            background: rgba(5, 5, 16, 0.8); backdrop-filter: blur(10px);
+            position: sticky; top: 0; z-index: 100;
+        }
+        .brand { font-size: 1.5rem; font-weight: bold; color: #fff; text-shadow: 0 0 10px #fff; }
+        .brand span { color: #00ffcc; text-shadow: 0 0 10px #00ffcc; }
+        .status { 
+            font-size: 0.8rem; color: #00ffcc; display: flex; align-items: center; gap: 5px; 
+            text-shadow: 0 0 5px #00ffcc; 
+        }
+        .status::before { 
+            content: ''; width: 8px; height: 8px; background: #00ffcc; 
+            border-radius: 50%; box-shadow: 0 0 10px #00ffcc; animation: blink 1s infinite; 
+        }
+
+        /* Hero Banner */
+        .hero { 
+            padding: 60px 20px; text-align: center; 
+            background: radial-gradient(circle at center, #111827 0%, #050510 100%);
+            border-bottom: 1px solid #1f2937;
+        }
+        .hero h1 { font-size: 2.2rem; margin-bottom: 10px; }
+        .hero h1 span { color: #00ffcc; text-shadow: 0 0 15px #00ffcc; }
+        .hero p { color: #94a3b8; font-size: 0.95rem; max-width: 400px; margin: 0 auto; line-height: 1.8; }
+
+        /* File List Section */
+        .section-title { 
+            padding: 15px 20px; font-size: 1.1rem; margin: 30px 20px 10px 20px; 
+            border-left: 4px solid #a855f7; background: rgba(26, 26, 46, 0.5);
+            box-shadow: -5px 0 15px -5px #a855f7; color: #fff; text-shadow: 0 0 5px #a855f7;
+            border-radius: 0 8px 8px 0;
+        }
+        
+        .file-grid { padding: 0 20px 40px 20px; display: grid; grid-template-columns: 1fr; gap: 15px; }
+
+        /* Card File */
+        .file-card {
+            background: rgba(17, 24, 39, 0.7); backdrop-filter: blur(5px);
+            border: 1px solid #1f2937; border-radius: 12px;
+            padding: 20px; display: flex; flex-direction: column; gap: 12px;
+            transition: all 0.3s ease;
+        }
+        .file-card:hover { 
+            border-color: #00ffcc; transform: translateY(-3px);
+            box-shadow: 0 10px 20px -10px #00ffcc; 
+        }
+        .file-header { display: flex; justify-content: space-between; align-items: center; }
+        .file-name { font-size: 1.1rem; font-weight: bold; color: #fff; text-shadow: 0 0 5px #fff; }
+        .file-tag { font-size: 0.7rem; background: rgba(168, 85, 247, 0.2); color: #a855f7; padding: 4px 8px; border-radius: 4px; border: 1px solid #a855f7; text-shadow: 0 0 5px #a855f7; }
+        .file-desc { font-size: 0.85rem; color: #94a3b8; }
+        .file-meta { display: flex; gap: 15px; font-size: 0.75rem; color: #64748b; margin-top: 5px; }
+        
+        /* Tombol Download */
+        .btn-dl {
+            display: block; text-align: center; text-decoration: none;
+            background: #00ffcc; color: #000; font-weight: 900;
+            padding: 14px; border-radius: 8px; font-size: 0.9rem; margin-top: 10px;
+            transition: 0.2s; text-transform: uppercase; letter-spacing: 2px;
+            box-shadow: 0 0 10px rgba(0,255,204,0.4); border: 1px solid #00ffcc;
+        }
+        .btn-dl:hover { 
+            background: #050510; color: #00ffcc; 
+            box-shadow: 0 0 20px #00ffcc; 
+        }
+
+        /* Empty State */
+        .empty-state {
+            text-align: center; padding: 50px 20px; color: #64748b;
+            border: 1px dashed #1f2937; border-radius: 12px; margin: 0 20px 40px 20px;
+            background: rgba(17, 24, 39, 0.3);
+        }
+        .empty-state h2 { color: #94a3b8; margin-bottom: 10px; text-shadow: 0 0 10px #64748b; }
+    </style>
+</head>
+<body>
+
+    <!-- Canvas buat Animasi Background -->
+    <canvas id="bg-canvas"></canvas>
+
+    <!-- 1. INSTANT WELCOME SCREEN -->
+    <div id="welcome-screen">
+        <div class="welcome-text">WELCOME TO HANZz STORE</div>
+        <div class="welcome-sub">Connecting to secure server...</div>
+    </div>
+
+    <!-- 2. MAIN CONTENT -->
+    <div id="main-content">
+        <header>
+            <div class="brand">HANZz<span>_STORE</span></div>
+            <div class="status">SYSTEM ONLINE</div>
+        </header>
+
+        <section class="hero">
+            <h1>Welcome To <span>HANZz STORE</span></h1>
+            <p>Pusat file, mod, dan tools terbaik. Update setiap hari, 100% gratis. Pilih file yang mau lo download di bawah.</p>
+        </section>
+
+        <div class="section-title">📁 FILE TERSEDIA</div>
+
+        <!-- ======================================================== -->
+        <!-- AREA FILE (NANTI ISI DI SINI) -->
+        <!-- ======================================================== -->
+
+        <!-- Kalau belum ada file, biarin kode "empty-state" ini -->
+        <div class="empty-state">
+            <h2>[ BELUM ADA FILE ]</h2>
+            <p>Database sedang diupdate. Cek lagi nanti ya!</p>
+        </div>
+
+        <!-- 
+        CARA NAMBAH FILE BARU:
+        1. Hapus tag <div class="empty-state">...</div> di atas.
+        2. Copy kode <div class="file-grid">...</div> di bawah ini, hapus tanda komentarnya.
+        -->
+
+        <!--
+        <div class="file-grid">
+            <div class="file-card">
+                <div class="file-header">
+                    <div class="file-name">NAMA FILE LO</div>
+                    <div class="file-tag">KATEGORI</div>
+                </div>
+                <div class="file-desc">Penjelasan singkat tentang file ini.</div>
+                <div class="file-meta">
+                    <span>📦 Size: 10MB</span>
+                    <span>📅 Update: Hari ini</span>
+                </div>
+                <a href="LINK_BICOLINK_LO" class="btn-dl">Download File</a>
+            </div>
+        </div>
+        -->
+        
+    </div>
+
+    <!-- 3. JAVASCRIPT (Animasi Welcome & Background) -->
+    <script>
+        // --- SCRIPT WELCOME SCREEN ---
+        window.addEventListener('load', () => {
+            setTimeout(() => {
+                document.getElementById('welcome-screen').classList.add('hidden');
+                document.getElementById('main-content').classList.add('show');
+            }, 3500); 
+        });
+
+        // --- SCRIPT ANIMASI BACKGROUND (PARTIKEL) ---
+        const canvas = document.getElementById('bg-canvas');
+        const ctx = canvas.getContext('2d');
+        let width, height;
+        let particles = [];
+
+        function resize() {
+            width = canvas.width = window.innerWidth;
+            height = canvas.height = window.innerHeight;
+        }
+        window.addEventListener('resize', resize);
+        resize();
+
+        class Particle {
+            constructor() {
+                this.x = Math.random() * width;
+                this.y = Math.random() * height;
+                this.vx = (Math.random() - 0.5) * 1.5;
+                this.vy = (Math.random() - 0.5) * 1.5;
+                this.size = Math.random() * 2 + 1;
+                this.color = Math.random() > 0.5 ? '#00ffcc' : '#a855f7'; // Cyan atau Purple
+            }
+            update() {
+                this.x += this.vx;
+                this.y += this.vy;
+                if (this.x < 0 || this.x > width) this.vx *= -1;
+                if (this.y < 0 || this.y > height) this.vy *= -1;
+            }
+            draw() {
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+                ctx.fillStyle = this.color;
+                ctx.shadowBlur = 10;
+                ctx.shadowColor = this.color;
+                ctx.fill();
+            }
+        }
+
+        // Bikin 50 partikel
+        for (let i = 0; i < 50; i++) {
+            particles.push(new Particle());
+        }
+
+        function animate() {
+            ctx.clearRect(0, 0, width, height);
+            particles.forEach(p => {
+                p.update();
+                p.draw();
+            });
+            requestAnimationFrame(animate);
+        }
+        animate();
+    </script>
+</body>
+</html>
